@@ -77,8 +77,10 @@ public class SimpleIterativeLinearClustering {
             }
         }
 
-        MSTClusterMerging merging = new MSTClusterMerging(mergingTolerance, pos_weight);
-        labels = merging.merge(segments, labels);
+        if(mergingTolerance > 0) {
+            MSTClusterMerging merging = new MSTClusterMerging(mergingTolerance, pos_weight);
+            labels = merging.merge(segments, labels);
+        }
 
         return labels;
     }

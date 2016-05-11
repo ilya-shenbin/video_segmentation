@@ -27,6 +27,19 @@ public class SimpleIterativeLinearClusteringTest extends Assert {
         assertTrue(labels[getI(199, 0)] != labels[getI(200, 0)]);
     }
 
+    @Test
+    public void testMerging() {
+        ImagePlus imgPlus = new ImagePlus("data/silc_test.png");
+        ImageProcessor image = imgPlus.getProcessor();
+        width = image.getWidth();
+
+        SimpleIterativeLinearClustering silc = new SimpleIterativeLinearClustering(20, 5, 1, 30);
+        int labels[] = silc.fit(image);
+
+        assertTrue(labels[getI(0, 0)] == labels[getI(0, 100)]);
+        assertTrue(labels[getI(110, 70)] == labels[getI(238, 70)]);
+    }
+
     private int getI(int x, int y) {
         return y * width + x;
     }

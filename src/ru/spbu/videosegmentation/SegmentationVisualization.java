@@ -15,7 +15,13 @@ public class SegmentationVisualization {
 
         result.setColor(new Color(255, 0, 0));
         for(int i = 0; i < size; i++) {
-            if(i % width != 0 && labels[i] != labels[i-1] || i > width && labels[i] != labels[i-width]) {
+            if(i % width != 0 && labels[i] != labels[i-1]) {
+                result.drawDot(getX(i) - 1, getY(i));
+                result.drawDot(getX(i), getY(i));
+            }
+
+            if(i > width && labels[i] != labels[i-width]) {
+                result.drawDot(getX(i), getY(i) - 1);
                 result.drawDot(getX(i), getY(i));
             }
         }

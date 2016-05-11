@@ -18,7 +18,7 @@ public class SimpleIterativeLinearClusteringTest extends Assert {
         ImageProcessor image = imgPlus.getProcessor();
         width = image.getWidth();
 
-        SimpleIterativeLinearClustering silc = new SimpleIterativeLinearClustering(100, 5, 1);
+        SimpleIterativeLinearClustering silc = new SimpleIterativeLinearClustering(100, 5, 1, 0);
         int labels[] = silc.fit(image);
 
         assertTrue(labels[getI(0, 0)] == labels[getI(0, 1)]);

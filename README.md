@@ -1,1 +1,1 @@
-# video_segmentation
+# Video segmentation

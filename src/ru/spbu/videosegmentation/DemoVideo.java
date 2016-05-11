@@ -16,7 +16,7 @@ public class DemoVideo {
             ImagePlus imgPlus = new ImagePlus("filename", videoReader.getNext());
             ImageProcessor image = imgPlus.getProcessor();
 
-            SimpleIterativeLinearClustering silc = new SimpleIterativeLinearClustering(50, 5, 0.01);
+            SimpleIterativeLinearClustering silc = new SimpleIterativeLinearClustering(50, 5, 0.01, 30);
             int labels[] = silc.fit(image);
 
             image = SegmentationVisualization.visualize(image, labels);

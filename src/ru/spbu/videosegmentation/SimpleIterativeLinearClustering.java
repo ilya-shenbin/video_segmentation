@@ -11,15 +11,17 @@ public class SimpleIterativeLinearClustering {
     private double[][] segments;
     private int max_iter;
     private double pos_weight;
+    private int mergingTolerance;
 
-    public SimpleIterativeLinearClustering(int segStep, int max_iter, double pos_weight) {
+    public SimpleIterativeLinearClustering(int segStep, int max_iter, double pos_weight, int mergingTolerance) {
         this.segStep = segStep;
         this.max_iter = max_iter;
         this.pos_weight = pos_weight;
+        this.mergingTolerance = mergingTolerance;
     }
 
     public SimpleIterativeLinearClustering(int segStep) {
-        this(segStep, 5, 1);
+        this(segStep, 5, 1, 10);
     }
 
     public int[] fit(ImageProcessor image) {
@@ -75,6 +77,9 @@ public class SimpleIterativeLinearClustering {
             }
         }
 
+        MSTClusterMerging merging = new MSTClusterMerging(mergingTolerance, pos_weight);
+        labels = merging.merge(segments, labels);
+
         return labels;
     }
 
@@ -98,14 +103,6 @@ public class SimpleIterativeLinearClustering {
 
     private int getI(int x, int y) {
         return y * width + x;
-    }
-
-    private int getX(int i) {
-        return i % width;
-    }
-
-    private int getY(int i) {
-        return i / width;
     }
 
     private int getSegX(int i) {

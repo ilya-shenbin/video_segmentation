@@ -9,14 +9,14 @@ public class SimpleIterativeLinearClustering {
     private int segStep;
     private int width;
     private double[][] segments;
-    private int max_iter;
-    private double pos_weight;
+    private int maxIter;
+    private double posWeight;
     private int mergingTolerance;
 
-    public SimpleIterativeLinearClustering(int segStep, int max_iter, double pos_weight, int mergingTolerance) {
+    public SimpleIterativeLinearClustering(int segStep, int maxIter, double posWeight, int mergingTolerance) {
         this.segStep = segStep;
-        this.max_iter = max_iter;
-        this.pos_weight = pos_weight;
+        this.maxIter = maxIter;
+        this.posWeight = posWeight;
         this.mergingTolerance = mergingTolerance;
     }
 
@@ -31,6 +31,7 @@ public class SimpleIterativeLinearClustering {
         int subHeight = height / segStep;
         int subWidth = width / segStep;
 
+        // Grid initialization
         int segI = 0;
         segments = new double[subHeight * subWidth][];
         for(int x = (width % segStep + segStep) / 2; x < width; x += segStep) {
@@ -40,16 +41,17 @@ public class SimpleIterativeLinearClustering {
             }
         }
 
+        // Labels and distances initialization
         int[] labels = new int[data.length];
         double[] distances = new double[data.length];
         for(int i = 0; i < data.length; i++) {
             labels[i] = -1;
             distances[i] = Double.POSITIVE_INFINITY;
         }
-
         int[] labels_count = new int[segments.length];
 
-        for(int g = 0; g < max_iter; g++) {
+        // Clustering
+        for(int g = 0; g < maxIter; g++) {
             // M-step
             for (int i = 0; i < segments.length; i++) {
                 for (int x = Math.max(0, getSegX(i) - segStep); x < Math.min(width, getSegX(i) + segStep); x++) {
@@ -77,8 +79,9 @@ public class SimpleIterativeLinearClustering {
             }
         }
 
+        // Merging
         if(mergingTolerance > 0) {
-            MSTClusterMerging merging = new MSTClusterMerging(mergingTolerance, pos_weight);
+            MSTClusterMerging merging = new MSTClusterMerging(mergingTolerance, posWeight);
             labels = merging.merge(segments, labels);
         }
 
@@ -141,7 +144,7 @@ public class SimpleIterativeLinearClustering {
             result += Math.pow(a[i] - b[i], 2);
         }
         for(int i = 3; i < 5; i++) {
-            result += pos_weight * Math.pow(a[i] - b[i], 2);
+            result += posWeight * Math.pow(a[i] - b[i], 2);
         }
         return result;
     }

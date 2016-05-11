@@ -8,24 +8,24 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class MSTClusterMerging {
     private final int threshold;
-    private final double pos_weight;
+    private final double posWeight;
 
-    public MSTClusterMerging(int threshold, double pos_weight) {
+    public MSTClusterMerging(int threshold, double posWeight) {
         this.threshold = threshold;
-        this.pos_weight = pos_weight;
+        this.posWeight = posWeight;
     }
 
     int[] merge(double[][] segments, int[] labels) {
         int[] result = labels.clone();
         int graph_size = segments.length;
 
+        // Graph building
         final WeightedGraph<Integer, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
         for(int i = 0; i < graph_size; i++) {
             graph.addVertex(i);
@@ -41,10 +41,12 @@ public class MSTClusterMerging {
             }
         }
 
+        // Minimum spanning tree building, heavy edges filtering
         PrimMinimumSpanningTree<Integer, DefaultWeightedEdge> prim = new PrimMinimumSpanningTree<>(graph);
         Set<DefaultWeightedEdge> mst = prim.getMinimumSpanningTreeEdgeSet();
         mst = mst.stream().filter(e -> graph.getEdgeWeight(e) < threshold).collect(Collectors.toSet());
 
+        // New graph building
         final UndirectedGraph<Integer, DefaultEdge> forest = new SimpleGraph<>(DefaultEdge.class);
         for(int i = 0; i < graph_size; i++) {
             forest.addVertex(i);
@@ -53,9 +55,11 @@ public class MSTClusterMerging {
             forest.addEdge(graph.getEdgeSource(e), graph.getEdgeTarget(e));
         }
 
+        // Connected components finding
         ConnectivityInspector<Integer, DefaultEdge> connectivityInspector = new ConnectivityInspector<>(forest);
         List<Set<Integer>> connectedSets = connectivityInspector.connectedSets();
 
+        // Relabeling
         int[] labels_remapping = new int[graph_size];
         Arrays.fill(labels_remapping, -1);
 
@@ -80,7 +84,7 @@ public class MSTClusterMerging {
             result += Math.pow(a[i] - b[i], 2);
         }
         for(int i = 3; i < 5; i++) {
-            result += pos_weight * Math.abs(a[i] - b[i]);
+            result += posWeight * Math.abs(a[i] - b[i]);
         }
         return result;
     }
